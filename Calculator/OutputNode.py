@@ -72,7 +72,7 @@ class CalculatorNodeOutputFunctions(AllNodeFunctions):
     GraphicsNode_class = CalculatorOutputGraphicalNode
     NodeContent_class = CalcOutputContent
 
-    def __init__(self, scene, inputs=[], outputs=[1]):
+    def __init__(self, scene, inputs=[], outputs=[]):
         self.op_title = "OUTPUT NODE"
         # self.content_label = content_label
         # content_label = "", content_label_objname = "calc_node_bg",

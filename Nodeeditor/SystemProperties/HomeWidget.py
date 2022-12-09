@@ -37,6 +37,7 @@ class NodeEditorWidget(QWidget):
 
         self.createHomeWidget()
 
+
     def createHomeWidget(self):
         """Set up this ``NodeEditorWidget`` with its layout,  :class:`~nodeeditor.node_scene.Scene` and
         :class:`~nodeeditor.node_graphics_view.QDMGraphicsView`"""
@@ -51,13 +52,8 @@ class NodeEditorWidget(QWidget):
         self.view = self.__class__.GraphicsView_class(self.scene.grScene, self)
         self.layout.addWidget(self.view)
 
-    def isModified(self) -> bool:
-        """Has the `Scene` been modified?
-
-        :return: ``True`` if the `Scene` has been modified
-        :rtype: ``bool``
-        """
-        return self.scene.isModified()
+    def isModified(self):
+        return self.scene.has_been_modified
 
     def isFilenameSet(self) -> bool:
         """Do we have a graph loaded from file or are we creating a new one?
@@ -223,7 +219,7 @@ class NodeEditorWidget(QWidget):
             node.setPos(scene_pos.x(), scene_pos.y())
         elif action == output:
 
-            node=CalculatorNodeOutputFunctions(self.scene,inputs=[0,1],outputs=[1,1,1])
+            node=CalculatorNodeOutputFunctions(self.scene,inputs=[0,1],outputs=[])
             node.setPos(scene_pos.x(), scene_pos.y())
 
             # node = CalculatorBaseNodeFunctions(self.scene, op_code=0, op_title="Output", inputs=[0, 1], outputs=[1])
