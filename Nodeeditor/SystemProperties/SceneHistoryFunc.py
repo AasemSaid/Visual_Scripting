@@ -90,6 +90,8 @@ class AllSceneHistoryFunctions():
             self.restoreHistory()
             self.scene.has_been_modified = True
 
+        
+
     def redo(self):
         """Redo operation"""
         if DEBUG: print("REDO")

@@ -92,3 +92,23 @@ class CalculatorNodeOutputFunctions(AllNodeFunctions):
 
     def getGraphicsNodeClass(self):
         return self.__class__.GraphicsNode_class
+
+    def evalImplementation(self):
+        input_node = self.getInput(0)
+        if not input_node:
+            self.grNode.setToolTip("input is not connected ")
+            self.markInvalid()
+            return
+
+        val = input_node.eval()
+
+        if not val:
+            self.grNode.setToolTip("input is null")
+            self.markInvalid()
+            return
+        self.content.lbl.setText("%d" % val )
+
+        self.markInvalid(False)
+        self.markDirty(False)
+        self.grNode.setToolTip(" ")
+        return val

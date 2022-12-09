@@ -389,17 +389,35 @@ class AllNodeFunctions(Serializable):
         for other_node in self.getChildrenNodes():
             other_node.markInvalid(new_value)
             other_node.markDescendantsInvalid(new_value)
-
+    def evalImplementation(self):
+        return 123
     def eval(self, index=0):
         """Evaluate this `Node`. This is supposed to be overridden. See :ref:`evaluation` for more"""
-        self.markDirty(False)
-        self.markInvalid(False)
-        return 0
+        if not self.isDirty() and not self.isInvalid():
+            print("_> returning cached is value :" % self.__class__.__name__,self.value)
+            return self.value
+
+        try:
+            val = self.evalImplementation()
+            return val
+        except ValueError as e :
+            self.markInvalid()
+            self.grNode.setToolTip(str(e))
+            self.markDescendantsDirty()
+
+
+        except Exception as e :
+            self.markInvalid()
+            self.grNode.setToolTip(str(e))
+            dumpException(e)
+
 
     def evalChildren(self):
         """Evaluate all children of this `Node`"""
         for node in self.getChildrenNodes():
             node.eval()
+
+
 
     # traversing nodes functions
 
@@ -417,6 +435,8 @@ class AllNodeFunctions(Serializable):
                 other_node = edge.getOtherSocket(self.outputs[ix]).node
                 other_nodes.append(other_node)
         return other_nodes
+
+
 
     def getInput(self, index: int = 0) -> ['AllNodeFunctions', None]:
         """

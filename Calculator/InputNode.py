@@ -180,3 +180,21 @@ class CalculatorNodeInputFunctions(AllNodeFunctions):
     def getGraphicsNodeClass(self):
         return self.__class__.GraphicsNode_class
 
+    def evalImplementation(self):
+        u_value = self.content.edit.text()
+        s_value = int(u_value)
+        self.value = s_value
+        self.markDirty(False)
+        self.markInvalid(False)
+
+        self.markDescendantsInvalid(False)
+        self.markDescendantsDirty()
+
+        self.grNode.setToolTip("")
+        self.evalChildren()
+
+        return self.value
+
+
+
+

@@ -13,6 +13,12 @@ class CalcNode_Add(CalculatorBaseNodeFunctions):
     def evalOperation(self, input1, input2):
         return input1 + input2
 
+    def evalImplementation(self):
+        self.markInvalid(False)
+        self.markDirty(False)
+        return 123
+
+
 
 @register_node(OP_NODE_SUB)
 class CalcNode_Sub(CalculatorBaseNodeFunctions):
