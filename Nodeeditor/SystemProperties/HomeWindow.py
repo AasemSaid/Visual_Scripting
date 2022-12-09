@@ -2,16 +2,14 @@
 """
 A module containing the Main Window class
 """
-import os, json
-from PyQt5.QtCore import QSize, QSettings, QPoint , QEvent
-from PyQt5.QtWidgets import QMainWindow, QLabel, QAction, QMessageBox, QFileDialog, QApplication , QMenu , qApp
+import json
+import os
 
-from Nodeeditor.Edge.EdgeFunc import AllEdgeFunctions
-from Nodeeditor.Node.NodeFunc import AllNodeFunctions
+from PyQt5.QtCore import QSize, QSettings, QPoint
+from PyQt5.QtWidgets import QMainWindow, QLabel, QAction, QMessageBox, QFileDialog, QApplication
+
 from Nodeeditor.SystemProperties.HomeWidget import NodeEditorWidget
-from Nodeeditor.SystemProperties.SceneFunc import AllSceneFunctions
 from Nodeeditor.SystemProperties.utils_no_qt import dumpException
-
 
 
 class NodeEditorWindow(QMainWindow):
@@ -21,9 +19,7 @@ class NodeEditorWindow(QMainWindow):
         self.name_company = 'Blenderfreak'
         self.name_product = 'NodeEditor'
 
-
         self.initUI()
-
 
     def createAct(self, name, shortcut, tooltip, callback):
         act = QAction(name, self)
@@ -37,20 +33,17 @@ class NodeEditorWindow(QMainWindow):
         self.createActions()
         self.createMenus()
 
-
         # create node editor widget
         self.nodeeditor = NodeEditorWidget(self)
         self.nodeeditor.scene.addHasBeenModifiedListener(self.setTitle)
         self.setCentralWidget(self.nodeeditor)
-
-
 
         # set window properties
         self.setGeometry(200, 200, 800, 600)
         self.setTitle()
         self.show()
 
-    def createStatusBas(self):
+    def createStatusBa(self):
         # status bar
         self.statusBar().showMessage("")
         self.status_mouse_pos = QLabel("")
@@ -65,24 +58,28 @@ class NodeEditorWindow(QMainWindow):
                                  triggered=self.onFileSaveAs)
         self.actExit = QAction('E&xit', self, shortcut='Ctrl+Q', statusTip="Exit application", triggered=self.close)
 
-        self.actUndo = QAction('&Undo', self, shortcut='Ctrl+Z', statusTip="Undo last operation",triggered=self.onEditUndo)
-        self.actRedo = QAction('&Redo', self, shortcut='Ctrl+Shift+Z', statusTip="Redo last operation",triggered=self.onEditRedo)
+        self.actUndo = QAction('&Undo', self, shortcut='Ctrl+Z', statusTip="Undo last operation",
+                               triggered=self.onEditUndo)
+        self.actRedo = QAction('&Redo', self, shortcut='Ctrl+Shift+Z', statusTip="Redo last operation",
+                               triggered=self.onEditRedo)
         self.actCut = QAction('Cu&t', self, shortcut='Ctrl+X', statusTip="Cut to clipboard", triggered=self.onEditCut)
-        self.actCopy = QAction('&Copy', self, shortcut='Ctrl+C', statusTip="Copy to clipboard", triggered=self.onEditCopy)
-        self.actPaste = QAction('&Paste', self, shortcut='Ctrl+V', statusTip="Paste from clipboard",triggered=self.onEditPaste)
-        self.actDelete = QAction('&Delete', self, shortcut='Del', statusTip="Delete selected items",triggered=self.onEditDelete)
-        self.actNew =self.createAct('&New', 'Ctrl+N', "Create new graph", self.onFileNew)
-        self.actOpen=self.createAct('&Open', 'Ctrl+O', "Open file", self.onFileOpen)
-        self.actSave=self.createAct('&Save', 'Ctrl+S', "Save file", self.onFileSave)
+        self.actCopy = QAction('&Copy', self, shortcut='Ctrl+C', statusTip="Copy to clipboard",
+                               triggered=self.onEditCopy)
+        self.actPaste = QAction('&Paste', self, shortcut='Ctrl+V', statusTip="Paste from clipboard",
+                                triggered=self.onEditPaste)
+        self.actDelete = QAction('&Delete', self, shortcut='Del', statusTip="Delete selected items",
+                                 triggered=self.onEditDelete)
+        self.actNew = self.createAct('&New', 'Ctrl+N', "Create new graph", self.onFileNew)
+        self.actOpen = self.createAct('&Open', 'Ctrl+O', "Open file", self.onFileOpen)
+        self.actSave = self.createAct('&Save', 'Ctrl+S', "Save file", self.onFileSave)
         self.actSaveAs = self.createAct('Save &As...', 'Ctrl+Shift+S', "Save file as...", self.onFileSaveAs)
-        self.actExit=self.createAct('E&xit', 'Ctrl+Q', "Exit application", self.close)
-        self.actUndo=self.createAct('&Undo', 'Ctrl+Z', "Undo last operation", self.onEditUndo)
-        self.actRedo=self.createAct('&Redo', 'Ctrl+Shift+Z', "Redo last operation", self.onEditRedo)
-        self.actCut=self.createAct('Cu&t', 'Ctrl+X', "Cut to clipboard", self.onEditCut)
-        self.actCopy=self.createAct('&Copy', 'Ctrl+C', "Copy to clipboard", self.onEditCopy)
-        self.actPaste=self.createAct('&Paste', 'Ctrl+V', "Paste from clipboard", self.onEditPaste)
-        self.actDelete=self.createAct('&Delete', 'Del', "Delete selected items", self.onEditDelete)
-
+        self.actExit = self.createAct('E&xit', 'Ctrl+Q', "Exit application", self.close)
+        self.actUndo = self.createAct('&Undo', 'Ctrl+Z', "Undo last operation", self.onEditUndo)
+        self.actRedo = self.createAct('&Redo', 'Ctrl+Shift+Z', "Redo last operation", self.onEditRedo)
+        self.actCut = self.createAct('Cu&t', 'Ctrl+X', "Cut to clipboard", self.onEditCut)
+        self.actCopy = self.createAct('&Copy', 'Ctrl+C', "Copy to clipboard", self.onEditCopy)
+        self.actPaste = self.createAct('&Paste', 'Ctrl+V', "Paste from clipboard", self.onEditPaste)
+        self.actDelete = self.createAct('&Delete', 'Del', "Delete selected items", self.onEditDelete)
 
     def createMenus(self):
         menubar = self.menuBar()
@@ -106,14 +103,12 @@ class NodeEditorWindow(QMainWindow):
         self.editMenu.addAction(self.actPaste)
         self.editMenu.addSeparator()
         self.editMenu.addAction(self.actDelete)
+
     def setTitle(self):
         title = "Node Editor - "
-        title +=self.getCurrentNodeWidget().getUserFriendlyFilename()
-
-
+        title += self.getCurrentNodeWidget().getUserFriendlyFilename()
 
         self.setWindowTitle(title)
-
 
     def closeEvent(self, event):
         try:
@@ -124,8 +119,8 @@ class NodeEditorWindow(QMainWindow):
         except Exception as e:
             dumpException(e)
 
-    def isModified(self):
-         return self.getCurrentNodeWidget().scene.has_been_modified
+    # def isModified(self):
+    #     return self.getCurrentNodeWidget().scene.has_been_modified
 
     def getCurrentNodeWidget(self):
         return self.centralWidget()
@@ -135,9 +130,9 @@ class NodeEditorWindow(QMainWindow):
         #     return True
         #
         res = QMessageBox.warning(self, "About to loose your work?",
-                "The document has been modified.\n Do you want to save your changes?",
-                QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
-              )
+                                  "The document has been modified.\n Do you want to save your changes?",
+                                  QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+                                  )
 
         if res == QMessageBox.Save:
             return self.onFileSave()
@@ -145,8 +140,6 @@ class NodeEditorWindow(QMainWindow):
             return False
 
         return True
-
-
 
     def onScenePosChanged(self, x, y):
         self.status_mouse_pos.setText("Scene Pos: [%d, %d]" % (x, y))
@@ -156,7 +149,6 @@ class NodeEditorWindow(QMainWindow):
             self.getCurrentNodeWidget().scene.clear()
             self.filename = None
             self.setTitle()
-
 
     def onFileOpen(self):
         if self.maybeSave():
@@ -225,8 +217,6 @@ class NodeEditorWindow(QMainWindow):
         self.resize(size)
 
     def writeSettings(self):
-        settings = QSettings(self.name_company,self.name_product)
+        settings = QSettings(self.name_company, self.name_product)
         settings.setValue('pos', self.pos())
         settings.setValue('size', self.size())
-
-
