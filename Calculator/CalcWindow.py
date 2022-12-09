@@ -6,12 +6,19 @@ from Nodeeditor.SystemProperties.HomeWindow import NodeEditorWindow
 from Nodeeditor.SystemProperties.utils_no_qt import dumpException
 from CalcSubWindow import CalculatorSubWindow
 from Nodeeditor.SystemProperties.HomeWidget import *
+import os
+from Nodeeditor.SystemProperties.utils import loadStylesheets
+import qss.nodeeditior_dark_resources
 
 class CalculatorWindow(NodeEditorWindow):
 
     def initUI(self):
         self.name_company = 'Blenderfreak'
         self.name_product = 'Calculator NodeEditor'
+
+        self.stylesheet_filename =  os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss")
+        loadStylesheets(os.path.join(os.path.dirname(__file__), "qss/nodeeditor-dark.qss"),self.stylesheet_filename)
+
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
