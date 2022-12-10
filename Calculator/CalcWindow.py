@@ -151,7 +151,7 @@ class CalculatorWindow(NodeEditorWindow):
     def updateEditMenu(self):
         try:
             print("update Edit Menu")
-            active = self.getCurrentNodeEditorWidget()
+            active = self.getCurrentNodeWidget()
             hasMdiChild = (active is not None)
 
             self.actPaste.setEnabled(hasMdiChild)
