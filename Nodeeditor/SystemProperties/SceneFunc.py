@@ -65,10 +65,24 @@ class AllSceneFunctions(Serializable):
 
     @property
     def has_been_modified(self):
+        """
+        Has this `Scene` been modified?
+
+        :getter: ``True`` if the `Scene` has been modified
+        :setter: set new state. Triggers `Has Been Modified` event
+        :type: ``bool``
+        """
         return self._has_been_modified
 
     @has_been_modified.setter
     def has_been_modified(self, value):
+        # if not self._has_been_modified and value:
+        #     # set it now, because we will be reading it soon
+        #     self._has_been_modified = value
+        #
+        #     # call all registered listeners
+        #     # for callback in self._has_been_modified_listeners: callback()
+
         self._has_been_modified = value
 
     def createScene(self):

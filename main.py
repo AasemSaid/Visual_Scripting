@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.join( os.path.dirname(__file__), "..", ".." ))
 from Nodeeditor.SystemProperties.utils import loadStylesheet
 from Nodeeditor.SystemProperties.HomeWindow import NodeEditorWindow
 
-
+sys.path.insert(0, os.path.join( os.path.dirname(__file__), "..", ".." ))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

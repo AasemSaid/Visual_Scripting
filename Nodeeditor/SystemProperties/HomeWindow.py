@@ -21,15 +21,7 @@ class NodeEditorWindow(QMainWindow):
 
         self.initUI()
 
-    def createAct(self, name, shortcut, tooltip, callback):
-        act = QAction(name, self)
-        act.setShortcut(shortcut)
-        act.setToolTip(tooltip)
-        act.triggered.connect(callback)
-        return act
-
     def initUI(self):
-
         self.createActions()
         self.createMenus()
 
@@ -38,13 +30,14 @@ class NodeEditorWindow(QMainWindow):
         self.nodeeditor.scene.addHasBeenModifiedListener(self.setTitle)
         self.setCentralWidget(self.nodeeditor)
 
+        self.createStatusBar()
+
         # set window properties
         self.setGeometry(200, 200, 800, 600)
         self.setTitle()
         self.show()
 
-    def createStatusBa(self):
-        # status bar
+    def createStatusBar(self):
         self.statusBar().showMessage("")
         self.status_mouse_pos = QLabel("")
         self.statusBar().addPermanentWidget(self.status_mouse_pos)
@@ -69,22 +62,10 @@ class NodeEditorWindow(QMainWindow):
                                 triggered=self.onEditPaste)
         self.actDelete = QAction('&Delete', self, shortcut='Del', statusTip="Delete selected items",
                                  triggered=self.onEditDelete)
-        self.actNew = self.createAct('&New', 'Ctrl+N', "Create new graph", self.onFileNew)
-        self.actOpen = self.createAct('&Open', 'Ctrl+O', "Open file", self.onFileOpen)
-        self.actSave = self.createAct('&Save', 'Ctrl+S', "Save file", self.onFileSave)
-        self.actSaveAs = self.createAct('Save &As...', 'Ctrl+Shift+S', "Save file as...", self.onFileSaveAs)
-        self.actExit = self.createAct('E&xit', 'Ctrl+Q', "Exit application", self.close)
-        self.actUndo = self.createAct('&Undo', 'Ctrl+Z', "Undo last operation", self.onEditUndo)
-        self.actRedo = self.createAct('&Redo', 'Ctrl+Shift+Z', "Redo last operation", self.onEditRedo)
-        self.actCut = self.createAct('Cu&t', 'Ctrl+X', "Cut to clipboard", self.onEditCut)
-        self.actCopy = self.createAct('&Copy', 'Ctrl+C', "Copy to clipboard", self.onEditCopy)
-        self.actPaste = self.createAct('&Paste', 'Ctrl+V', "Paste from clipboard", self.onEditPaste)
-        self.actDelete = self.createAct('&Delete', 'Del', "Delete selected items", self.onEditDelete)
 
     def createMenus(self):
         menubar = self.menuBar()
 
-        # initialize Menu
         self.fileMenu = menubar.addMenu('&File')
         self.fileMenu.addAction(self.actNew)
         self.fileMenu.addSeparator()
@@ -111,24 +92,21 @@ class NodeEditorWindow(QMainWindow):
         self.setWindowTitle(title)
 
     def closeEvent(self, event):
-        try:
-            if self.maybeSave():
-                event.accept()
-            else:
-                event.ignore()
-        except Exception as e:
-            dumpException(e)
+        if self.maybeSave():
+            event.accept()
+        else:
+            event.ignore()
 
-    # def isModified(self):
-    #     return self.getCurrentNodeWidget().scene.has_been_modified
+    def isModified(self):
+        return self.getCurrentNodeWidget().scene.isModified()
 
     def getCurrentNodeWidget(self):
         return self.centralWidget()
 
     def maybeSave(self):
-        # if not self.isModified():
-        #     return True
-        #
+        if not self.isModified():
+            return True
+
         res = QMessageBox.warning(self, "About to loose your work?",
                                   "The document has been modified.\n Do you want to save your changes?",
                                   QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
@@ -146,68 +124,93 @@ class NodeEditorWindow(QMainWindow):
 
     def onFileNew(self):
         if self.maybeSave():
-            self.getCurrentNodeWidget().scene.clear()
-            self.filename = None
+            self.getCurrentNodeWidget().fileNew()
             self.setTitle()
 
     def onFileOpen(self):
         if self.maybeSave():
             fname, filter = QFileDialog.getOpenFileName(self, 'Open graph from file')
-            if fname == '':
-                return
-            if os.path.isfile(fname):
-                self.getCurrentNodeWidget().scene.loadFromFile(fname)
-                self.filename = fname
+            if fname != '' and os.path.isfile(fname):
+                self.getCurrentNodeWidget().fileLoad(fname)
                 self.setTitle()
 
     def onFileSave(self):
-        if self.filename is None: return self.onFileSaveAs()
-        self.getCurrentNodeWidget().scene.saveToFile(self.filename)
-        self.statusBar().showMessage("Successfully saved %s" % self.filename)
-        return True
+        current_nodeEditor = self.getCurrentNodeWidget()
+        if current_nodeEditor is not None:
+            if not current_nodeEditor.isFilenameSet():
+                return self.onFileSaveAs()
+
+            current_nodeEditor.fileSave()
+            self.statusBar().showMessage("Successfully saved %s" % current_nodeEditor.filename,5000)
+
+            if hasattr(current_nodeEditor,"setTitle"):
+                current_nodeEditor.setTitle()
+            else:
+                self.setTitle()
+            return True
+
 
     def onFileSaveAs(self):
-        fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
-        if fname == '':
-            return False
-        self.filename = fname
-        self.onFileSave()
-        return True
+        current_nodeEditor = self.getCurrentNodeWidget()
+        if current_nodeEditor is not None:
+            fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
+            if fname == '':
+                return False
+
+            current_nodeEditor.fileSave(fname)
+            self.statusBar().showMessage("Successfully saved as %s" % current_nodeEditor.filename,5000)
+
+
+            if hasattr(current_nodeEditor, "setTitle"):
+                current_nodeEditor.setTitle()
+            else:
+                self.setTitle()
+            return True
 
     def onEditUndo(self):
-        self.getCurrentNodeWidget().scene.history.undo()
+        if self.getCurrentNodeWidget():
+            self.getCurrentNodeWidget().scene.history.undo()
+
 
     def onEditRedo(self):
-        self.getCurrentNodeWidget().scene.history.redo()
+        if self.getCurrentNodeWidget():
+            self.getCurrentNodeWidget().scene.history.redo()
+
 
     def onEditDelete(self):
-        self.getCurrentNodeWidget().scene.grScene.views()[0].deleteSelected()
+        if self.getCurrentNodeWidget():
+            self.getCurrentNodeWidget().scene.grScene.views()[0].deleteSelected()
+
 
     def onEditCut(self):
-        data = self.getCurrentNodeWidget().scene.clipboard.serializeSelected(delete=True)
-        str_data = json.dumps(data, indent=4)
-        QApplication.instance().clipboard().setText(str_data)
+        if self.getCurrentNodeWidget():
+            data = self.getCurrentNodeWidget().scene.clipboard.serializeSelected(delete=True)
+            str_data = json.dumps(data, indent=4)
+            QApplication.instance().clipboard().setText(str_data)
+
 
     def onEditCopy(self):
-        data = self.getCurrentNodeWidget().scene.clipboard.serializeSelected(delete=False)
-        str_data = json.dumps(data, indent=4)
-        QApplication.instance().clipboard().setText(str_data)
+        if self.getCurrentNodeWidget():
+            data = self.getCurrentNodeWidget().scene.clipboard.serializeSelected(delete=False)
+            str_data = json.dumps(data, indent=4)
+            QApplication.instance().clipboard().setText(str_data)
 
     def onEditPaste(self):
-        raw_data = QApplication.instance().clipboard().text()
+        if self.getCurrentNodeWidget():
+            raw_data = QApplication.instance().clipboard().text()
 
-        try:
-            data = json.loads(raw_data)
-        except ValueError as e:
-            print("Pasting of not valid json data!", e)
-            return
+            try:
+                data = json.loads(raw_data)
+            except ValueError as e:
+                print("Pasting of not valid json data!", e)
+                return
 
-        # check if the json data are correct
-        if 'nodes' not in data:
-            print("JSON does not contain any nodes!")
-            return
+            # check if the json data are correct
+            if 'nodes' not in data:
+                print("JSON does not contain any nodes!")
+                return
 
-        self.centralWidget().scene.clipboard.deserializeFromClipboard(data)
+            self.getCurrentNodeWidget().scene.clipboard.deserializeFromClipboard(data)
 
     def readSettings(self):
         settings = QSettings(self.name_company, self.name_product)

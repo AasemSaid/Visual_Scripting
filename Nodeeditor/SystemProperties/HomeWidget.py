@@ -53,7 +53,7 @@ class NodeEditorWidget(QWidget):
         self.layout.addWidget(self.view)
 
     def isModified(self):
-        return self.scene.has_been_modified
+        return self.scene.isModified()
 
     def isFilenameSet(self) -> bool:
         """Do we have a graph loaded from file or are we creating a new one?
@@ -105,43 +105,33 @@ class NodeEditorWidget(QWidget):
         return name + ("*" if self.isModified() else "")
 
     def fileNew(self):
-        """Empty the scene (create new file)"""
         self.scene.clear()
         self.filename = None
         self.scene.history.clear()
         self.scene.history.storeInitialHistoryStamp()
 
-    def fileLoad(self, filename: str):
-        """Load serialized graph from JSON file
 
-        :param filename: file to load
-        :type filename: ``str``
-        """
+    def fileLoad(self, filename):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         try:
             self.scene.loadFromFile(filename)
             self.filename = filename
+
+            # clear history
             self.scene.history.clear()
             self.scene.history.storeInitialHistoryStamp()
+
             return True
-        except FileNotFoundError as e:
-            dumpException(e)
-            QMessageBox.warning(self, "Error loading %s" % os.path.basename(filename), str(e).replace('[Errno 2]', ''))
-            return False
         except InvalidFile as e:
-            dumpException(e)
-            # QApplication.restoreOverrideCursor()
+            print(e)
+            QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, "Error loading %s" % os.path.basename(filename), str(e))
             return False
         finally:
             QApplication.restoreOverrideCursor()
 
-    def fileSave(self, filename: str = None):
-        """Save serialized graph to JSON file. When called with an empty parameter, we won't store/remember the filename.
-
-        :param filename: file to store the graph
-        :type filename: ``str``
-        """
+    def fileSave(self, filename=None):
+        # when called with empty parameter, we won't store the filename
         if filename is not None: self.filename = filename
         QApplication.setOverrideCursor(Qt.WaitCursor)
         self.scene.saveToFile(self.filename)

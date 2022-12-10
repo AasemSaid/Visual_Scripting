@@ -4,6 +4,38 @@
     "scene_height": 64000,
     "nodes": [
         {
+            "id": 2074289007504,
+            "title": "Addition",
+            "pos_x": -140.0,
+            "pos_y": -237.0,
+            "inputs": [
+                {
+                    "id": 2074289124880,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 0
+                },
+                {
+                    "id": 2074289124928,
+                    "index": 1,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2074289124976,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {}
+        },
+        {
             "id": 2074289126560,
             "title": "Output",
             "pos_x": 197.0,
@@ -70,6 +102,38 @@
             "content": {}
         },
         {
+            "id": 2328300387008,
+            "title": "Division",
+            "pos_x": 129.0,
+            "pos_y": -216.0,
+            "inputs": [
+                {
+                    "id": 2328300387248,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 1,
+                    "socket_type": 0
+                },
+                {
+                    "id": 2328300387296,
+                    "index": 1,
+                    "multi_edges": false,
+                    "position": 1,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2328300387344,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 6,
+                    "socket_type": 1
+                }
+            ],
+            "content": {}
+        },
+        {
             "id": 2328300388256,
             "title": "Addition",
             "pos_x": 87.0,
@@ -103,6 +167,24 @@
         }
     ],
     "edges": [
+        {
+            "id": 2074289263840,
+            "edge_type": 2,
+            "start": 2074289263696,
+            "end": 2074289124928
+        },
+        {
+            "id": 2328300388064,
+            "edge_type": 2,
+            "start": 2074289124976,
+            "end": 2328300387248
+        },
+        {
+            "id": 2328300503488,
+            "edge_type": 2,
+            "start": 2328300387344,
+            "end": 2328300503344
+        },
         {
             "id": 2328300503296,
             "edge_type": 2,
