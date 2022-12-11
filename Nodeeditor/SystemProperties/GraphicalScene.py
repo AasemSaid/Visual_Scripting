@@ -63,6 +63,7 @@ class DrawGraphicalScene(QGraphicsScene):
         self.gridSize = 20
         self.gridSquares = 5
 
+
     # the drag events won't be allowed until dragMoveEvent is overriden
     def dragMoveEvent(self, event):
         """Overriden Qt's dragMoveEvent to enable Qt's Drag Events"""

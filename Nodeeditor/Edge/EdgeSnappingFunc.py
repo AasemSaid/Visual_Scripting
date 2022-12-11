@@ -32,7 +32,7 @@ class AllEdgeSnappingFunctions():
             scenepos.x() - self.edge_snapping_radius, scenepos.y() - self.edge_snapping_radius,
             self.edge_snapping_radius * 2, self.edge_snapping_radius * 2
         )
-        items = self.grScene.items(scanrect)
+        items = self.grScene.nodesDock(scanrect)
         items = list(filter(lambda x: isinstance(x, DrawGraphicalSocket), items))
 
         if len(items) == 0:

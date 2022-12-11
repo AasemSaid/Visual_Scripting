@@ -52,6 +52,13 @@ class DrawGraphicalNode(QGraphicsItem):
         self._title = value
         self.title_item.setPlainText(self._title)
 
+
+    # the drag events won't be allowed until dragMoveEvent is overriden
+    def dragMoveEvent(self, event):
+        pass
+
+
+
     def nodeProperties(self):
         """Set up this ``QGraphicsItem``"""
         self.setFlag(QGraphicsItem.ItemIsSelectable)

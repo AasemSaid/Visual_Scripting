@@ -126,15 +126,15 @@ class DrawGraphicalView(QGraphicsView):
         """Helper function to re-set the grView's State Machine state to the default"""
         self.mode = MODE_NOOP
 
-    def dragEnterEvent(self, event: QDragEnterEvent):
+    def dragEnterEvent(self, event):
         """Trigger our registered `Drag Enter` events"""
         for callback in self.drag_enter_listeners: callback(event)
 
-    def dropEvent(self, event: QDropEvent):
+    def dropEvent(self, event):
         """Trigger our registered `Drop` events"""
         for callback in self.drop_listeners: callback(event)
 
-    def addDragEnterListener(self, callback: 'function'):
+    def addDragEnterListener(self, callback):
         """
         Register callback for `Drag Enter` event
 
@@ -142,7 +142,7 @@ class DrawGraphicalView(QGraphicsView):
         """
         self.drag_enter_listeners.append(callback)
 
-    def addDropListener(self, callback: 'function'):
+    def addDropListener(self, callback):
         """
         Register callback for `Drop` event
 
@@ -200,7 +200,7 @@ class DrawGraphicalView(QGraphicsView):
 
             if event.modifiers() & Qt.CTRL:
                 print("  Graphic Items in GraphicScene:")
-                for item in self.grScene.items():
+                for item in self.grScene.nodesDock():
                     print('    ', item)
 
         if DEBUG_MMB_LAST_SELECTIONS and event.modifiers() & Qt.SHIFT:
@@ -386,10 +386,10 @@ class DrawGraphicalView(QGraphicsView):
         scenepos = self.mapToScene(event.pos())
 
         try:
-            modified = self.setSocketHighlights(scenepos, highlighted=False, radius=EDGE_SNAPPING_RADIUS + 100)
-            if self.isSnappingEnabled(event):
-                _, scenepos = self.snapping.getSnappedToSocketPosition(scenepos)
-            if modified: self.update()
+            # modified = self.setSocketHighlights(scenepos, highlighted=False, radius=EDGE_SNAPPING_RADIUS + 100)
+            # if self.isSnappingEnabled(event):
+            #     _, scenepos = self.snapping.getSnappedToSocketPosition(scenepos)
+            # if modified: self.update()
 
             if self.mode == MODE_EDGE_DRAG:
                 self.dragging.updateDestination(scenepos.x(), scenepos.y())
@@ -466,13 +466,13 @@ class DrawGraphicalView(QGraphicsView):
                     edge.remove()
         self.grScene.scene.history.storeHistory("Delete cutted edges", setModified=True)
 
-    def setSocketHighlights(self, scenepos: QPointF, highlighted: bool = True, radius: float = 50):
-        """Set/disable socket highlights in Scene area defined by `scenepos` and `radius`"""
-        scanrect = QRectF(scenepos.x() - radius, scenepos.y() - radius, radius * 2, radius * 2)
-        items = self.grScene.items(scanrect)
-        items = list(filter(lambda x: isinstance(x, DrawGraphicalSocket), items))
-        for grSocket in items: grSocket.isHighlighted = highlighted
-        return items
+    # def setSocketHighlights(self, scenepos: QPointF, highlighted: bool = True, radius: float = 50):
+    #     """Set/disable socket highlights in Scene area defined by `scenepos` and `radius`"""
+    #     scanrect = QRectF(scenepos.x() - radius, scenepos.y() - radius, radius * 2, radius * 2)
+    #     items = self.grScene.nodesDock(scanrect)
+    #     items = list(filter(lambda x: isinstance(x, DrawGraphicalSocket), items))
+    #     for grSocket in items: grSocket.isHighlighted = highlighted
+    #     return items
 
     def deleteSelected(self):
         """Shortcut for safe deleting every object selected in the `Scene`."""

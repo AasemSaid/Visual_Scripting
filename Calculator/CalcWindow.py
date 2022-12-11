@@ -8,6 +8,7 @@ from CalcSubWindow import CalculatorSubWindow
 from Nodeeditor.SystemProperties.HomeWidget import *
 import os
 from Nodeeditor.SystemProperties.utils import loadStylesheets
+from CalcListBox import GraphicalDragListBox
 import qss.nodeeditior_dark_resources
 
 class CalculatorWindow(NodeEditorWindow):
@@ -37,13 +38,15 @@ class CalculatorWindow(NodeEditorWindow):
         self.windowMapper = QSignalMapper(self)
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
+        self.createNodesDock()
+
+
         self.createActions()
         self.createMenus()
         self.createToolBars()
         self.createStatusBar()
         self.updateMenus()
 
-        self.createNodesDock()
 
         self.readSettings()
 
@@ -150,8 +153,8 @@ class CalculatorWindow(NodeEditorWindow):
 
     def updateEditMenu(self):
         try:
-            print("update Edit Menu")
-            active = self.getCurrentNodeEditorWidget()
+            #print("update Edit Menu")
+            active = self.getCurrentNodeWidget()
             hasMdiChild = (active is not None)
 
             self.actPaste.setEnabled(hasMdiChild)
@@ -166,6 +169,15 @@ class CalculatorWindow(NodeEditorWindow):
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
+
+        toolbarNodes = self.windowMenu.addAction("Nodes Toolbar")
+        toolbarNodes.setCheckable(True)
+        toolbarNodes.triggered.connect(self.onWindowNodesToolbar)
+        toolbarNodes.setChecked(self.nodesDock.isVisible())
+
+        self.windowMenu.addSeparator()
+
+
         self.windowMenu.addAction(self.actClose)
         self.windowMenu.addAction(self.actCloseAll)
         self.windowMenu.addSeparator()
@@ -192,21 +204,23 @@ class CalculatorWindow(NodeEditorWindow):
             action.triggered.connect(self.windowMapper.map)
             self.windowMapper.setMapping(action, window)
 
+    def onWindowNodesToolbar(self):
+        if self.nodesDock.isVisible():
+            self.nodesDock.hide()
+        else:
+            self.nodesDock.show()
+
     def createToolBars(self):
         pass
 
     def createNodesDock(self):
-        self.listWidget = QListWidget()
-        self.listWidget.addItem("Add")
-        self.listWidget.addItem("Substract")
-        self.listWidget.addItem("Multiply")
-        self.listWidget.addItem("Divide")
+        self.nodesListWidget = GraphicalDragListBox()
 
-        self.items = QDockWidget("Nodes")
-        self.items.setWidget(self.listWidget)
-        self.items.setFloating(False)
+        self.nodesDock = QDockWidget("Nodes")
+        self.nodesDock.setWidget(self.nodesListWidget)
+        self.nodesDock.setFloating(False)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, self.items)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.nodesDock)
 
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")

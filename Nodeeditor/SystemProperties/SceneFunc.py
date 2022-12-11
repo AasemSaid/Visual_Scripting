@@ -186,15 +186,15 @@ class AllSceneFunctions(Serializable):
         """
         self._has_been_modified_listeners.append(callback)
 
-    def addItemSelectedListener(self, callback: 'function'):
+    def addItemSelectedListener(self, callback):
         """
         Register callback for `Item Selected` event
 
         :param callback: callback function
         """
-        self._item_selected_listeners.append(callback)
-
-    def addItemsDeselectedListener(self, callback: 'function'):
+        self._item_selected_listeners.append(callback
+                                             )
+    def addItemsDeselectedListener(self, callback):
         """
         Register callback for `Items Deselected` event
 
@@ -202,7 +202,7 @@ class AllSceneFunctions(Serializable):
         """
         self._items_deselected_listeners.append(callback)
 
-    def addDragEnterListener(self, callback: 'function'):
+    def addDragEnterListener(self, callback):
         """
         Register callback for `Drag Enter` event
 
@@ -210,7 +210,7 @@ class AllSceneFunctions(Serializable):
         """
         self.getView().addDragEnterListener(callback)
 
-    def addDropListener(self, callback: 'function'):
+    def addDropListener(self, callback):
         """
         Register callback for `Drop` event
 
