@@ -105,13 +105,13 @@ class AllEdgeIntersectFunctions:
         :type scene_pos_y: `float`
         """
         rect = self.hotZoneRect(self.draggedNode)
-        grItems = self.grScene.nodesDock(rect)
+        #grItems = self.grScene.nodesDock(rect)
         for grEdge in self.hoveredList: grEdge.hovered = False
         self.hoveredList = []
-        for grItem in grItems:
-            if hasattr(grItem, 'edge') and not self.draggedNode.hasConnectedEdge(grItem.edge):
-                self.hoveredList.append(grItem)
-                grItem.hovered = True
+        # for grItem in grItems:
+        #     if hasattr(grItem, 'edge') and not self.draggedNode.hasConnectedEdge(grItem.edge):
+        #         self.hoveredList.append(grItem)
+        #         grItem.hovered = True
 
     def intersect(self, node_box: 'QRectF') -> 'AllEdgeFunctions':
         """
@@ -123,11 +123,11 @@ class AllEdgeIntersectFunctions:
         :rtype: :class:`~nodeeditor.node_edge.Edge`
         """
         # returns the first edge that intersects with the dropped node, ignores the rest
-        grItems = self.grScene.nodesDock(node_box)
-        for grItem in grItems:
-            if hasattr(grItem, 'edge') and not self.draggedNode.hasConnectedEdge(grItem.edge):
-                return grItem.edge
-        return None
+        # grItems = self.grScene.nodesDock(node_box)
+        # for grItem in grItems:
+        #     if hasattr(grItem, 'edge') and not self.draggedNode.hasConnectedEdge(grItem.edge):
+        #         return grItem.edge
+        # return None
 
     def isConnected(self, node: 'Node'):
         """

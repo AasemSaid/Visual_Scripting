@@ -7,11 +7,11 @@ from PyQt5.QtGui import QColor, QBrush, QPen
 from PyQt5.QtCore import Qt, QRectF
 
 SOCKET_COLORS = [
-    QColor("#F87217"),
-    QColor("#F87217"),
-    QColor("#F87217"),
-    QColor("#F87217"),
-    QColor("#F87217"),
+    QColor("#FFFFFF"),
+    QColor("#FFFFFF"),
+    QColor("#FFFFFF"),
+    QColor("#FFFFFF"),
+    QColor("#FFFFFF"),
     QColor("#F87217"),
     QColor("#F87217"),
     QColor("#F87217"),

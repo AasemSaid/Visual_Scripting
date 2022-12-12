@@ -24,7 +24,7 @@ class CalculatorGraphicalNode(DrawGraphicalNode):
     # dh 3shan t8yr l font wl color bto3 l node l gdeda
     def classAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self.title_color = QColor("#FFFFFF")
+        self.title_color = QColor("#226688")
         self.title_font = QFont("Cairo", 10)
 
         self.color_default = QColor("#ef974d")
@@ -47,14 +47,14 @@ class CalculatorGraphicalNodeContent(AllContentWidgetFunctions):
     def createContentWidget(self):
         lbl = QLabel(self.node.content_label, self)
         lbl.setObjectName(self.node.content_label_objname)
-        lbl.setStyleSheet("background-color:RED")
+        # lbl.setStyleSheet("background-color:RED")
 
 class CalculatorBaseNodeFunctions(AllNodeFunctions):
     GraphicsNode_class = CalculatorGraphicalNode
     NodeContent_class = CalculatorGraphicalNodeContent
 
     def __init__(self, scene, op_code, op_title, content_label="", content_label_objname="calc_node_bg",
-                 inputs=[2, 2], outputs=[1]):
+                 inputs=[0, 0], outputs=[0]):
         self.op_code = op_code
         self.op_title = op_title
         self.content_label = content_label

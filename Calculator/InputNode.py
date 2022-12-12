@@ -138,6 +138,7 @@ class CalcInputContent(AllContentWidgetFunctions):
             "background-color:yellow;")
 
 
+
         # self.edit.setObjectName(self.node.content_label_objname)
 
     def serialize(self):

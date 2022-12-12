@@ -8,7 +8,8 @@ OP_NODE_MUL = 5
 OP_NODE_DIV = 6
 
 
-CALC_NODES = { }
+CALC_NODES = {
+}
 
 
 class ConfException(Exception): pass

@@ -203,20 +203,10 @@ class AllSceneFunctions(Serializable):
         self._items_deselected_listeners.append(callback)
 
     def addDragEnterListener(self, callback):
-        """
-        Register callback for `Drag Enter` event
-
-        :param callback: callback function
-        """
-        self.getView().addDragEnterListener(callback)
+        self.grScene.views()[0].addDragEnterListener(callback)
 
     def addDropListener(self, callback):
-        """
-        Register callback for `Drop` event
-
-        :param callback: callback function
-        """
-        self.getView().addDropListener(callback)
+        self.grScene.views()[0].addDropListener(callback)
 
     # custom flag to detect node or edge has been selected....
     def resetLastSelectedStates(self):

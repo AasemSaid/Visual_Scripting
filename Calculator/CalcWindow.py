@@ -1,15 +1,22 @@
+import os
 from PyQt5.QtCore import QSignalMapper
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from Nodeeditor.SystemProperties.HomeWindow import NodeEditorWindow
 from Nodeeditor.SystemProperties.utils_no_qt import dumpException , pp
-from CalcSubWindow import CalculatorSubWindow
 from Nodeeditor.SystemProperties.HomeWidget import *
-import os
 from Nodeeditor.SystemProperties.utils import loadStylesheets
-from CalcListBox import GraphicalDragListBox
+
+from CalculatorConfig import *
+from CalcOperations import *
+from CalcListBox import *
+from CalcSubWindow import CalculatorSubWindow
+
 import qss.nodeeditior_dark_resources
+
+
+DEBUG =True
 
 class CalculatorWindow(NodeEditorWindow):
 
@@ -24,6 +31,12 @@ class CalculatorWindow(NodeEditorWindow):
         )
 
         self.empty_icon =QIcon(".")
+
+        if DEBUG:
+            print("Registered nodes:")
+            pp(CALC_NODES)
+
+
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -214,7 +227,7 @@ class CalculatorWindow(NodeEditorWindow):
         pass
 
     def createNodesDock(self):
-        self.nodesListWidget = GraphicalDragListBox()
+        self.nodesListWidget = QDMDragListbox()
 
         self.nodesDock = QDockWidget("Nodes")
         self.nodesDock.setWidget(self.nodesListWidget)

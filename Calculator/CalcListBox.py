@@ -1,60 +1,66 @@
-from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from Nodeeditor.SystemProperties.utils_no_qt import dumpException
+from PyQt5.QtWidgets import *
+
 from CalculatorConfig import *
+from nodeeditor.utils import dumpException
 
 
-class GraphicalDragListBox(QListWidget):
+class QDMDragListbox(QListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.createListBox()
+        self.initUI()
 
-    def createListBox(self):
-        #init
-        self.setIconSize(QSize(32,32))
+    def initUI(self):
+        # init
+        self.setIconSize(QSize(32, 32))
         self.setSelectionMode(QAbstractItemView.SingleSelection)
         self.setDragEnabled(True)
-        self.addNewItems()
 
-    def addNewItems(self):
-        self.addItem("Input", "icons/in.png",OP_NODE_INPUT)
-        self.addItem("Output", "icons/out.png",OP_NODE_OUTPUT)
-        self.addItem("Add", "icons/add.png", OP_NODE_ADD)
-        self.addItem("Subtract", "icons/sub.png",OP_NODE_SUB)
-        self.addItem("Multiply", "icons/mul.png", OP_NODE_MUL)
-        self.addItem("Divide", "icons/divide.png", OP_NODE_DIV)
+        self.addMyItems()
 
-    def addItem(self, name,icon=None, op_code=0):
-        item=QListWidgetItem(name, self)
-        pixmap =QPixmap(icon if icon is not None else ".")
+
+    def addMyItems(self):
+        self.addMyItem("Input", "icons/in.png", OP_NODE_INPUT)
+        self.addMyItem("Output", "icons/out.png", OP_NODE_OUTPUT)
+        self.addMyItem("Add", "icons/add.png", OP_NODE_ADD)
+        self.addMyItem("Substract", "icons/sub.png", OP_NODE_SUB)
+        self.addMyItem("Multiply", "icons/mul.png", OP_NODE_MUL)
+        self.addMyItem("Divide", "icons/divide.png", OP_NODE_DIV)
+
+    def addMyItem(self, name, icon=None, op_code=0):
+        item = QListWidgetItem(name, self) # can be (icon, text, parent, <int>type)
+        pixmap = QPixmap(icon if icon is not None else ".")
         item.setIcon(QIcon(pixmap))
-        item.setSizeHint(QSize(32,32))
+        item.setSizeHint(QSize(32, 32))
 
         item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled)
 
+        # setup data
         item.setData(Qt.UserRole, pixmap)
         item.setData(Qt.UserRole + 1, op_code)
 
     def startDrag(self, *args, **kwargs):
-        print("ListBox::startDrag")
+        # print("ListBox::startDrag")
+
         try:
-            item=self.currentItem()
-            op_code=item.data(Qt.UserRole +1)
-            print("dragging item <%d>" % op_code, item)
+            item = self.currentItem()
+            op_code = item.data(Qt.UserRole + 1)
+            # print("dragging item <%d>" % op_code, item)
 
             pixmap = QPixmap(item.data(Qt.UserRole))
 
+
             itemData = QByteArray()
-            dataStream=QDataStream(itemData,QIODevice.WriteOnly)
+            dataStream = QDataStream(itemData, QIODevice.WriteOnly)
+            dataStream << pixmap
             dataStream.writeInt(op_code)
             dataStream.writeQString(item.text())
 
-
             mimeData = QMimeData()
-            mimeData.setData("application/x-item", itemData)
+            mimeData.setData(LISTBOX_MIMETYPE, itemData)
 
-            drag=QDrag(self)
+            drag = QDrag(self)
             drag.setMimeData(mimeData)
             drag.setHotSpot(QPoint(pixmap.width() // 2, pixmap.height() // 2))
             drag.setPixmap(pixmap)
@@ -62,4 +68,3 @@ class GraphicalDragListBox(QListWidget):
             drag.exec_(Qt.MoveAction)
 
         except Exception as e: dumpException(e)
-

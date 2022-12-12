@@ -1,9 +1,15 @@
 from PyQt5.QtGui import *
 
 from Nodeeditor.SystemProperties.HomeWidget import NodeEditorWidget
+from Nodeeditor.SystemProperties.utils_no_qt import *
+from Nodeeditor.Node.NodeFunc import AllNodeFunctions
+from Nodeeditor.SystemProperties.utils_no_qt import dumpException
+from CalculatorBaseNode import *
 from PyQt5.QtCore import *
 from CalculatorConfig import *
 
+
+DEBUG = False
 
 class CalculatorSubWindow(NodeEditorWidget):
     def __init__(self):
@@ -28,12 +34,12 @@ class CalculatorSubWindow(NodeEditorWidget):
         for callback in self._close_event_listeners: callback(self, event)
 
     def onDragEnter(self, event):
-        print("CalcSubWnd :: ~onDragEnter")
-        print("text: '%s'" % event.mimeData().text())
+        # print("CalcSubWnd :: ~onDragEnter")
+        # print("text: '%s'" % event.mimeData().text())
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             event.acceptProposedAction()
         else:
-            # print("..... denied drag enter event")
+            # print(" ... denied drag enter event")
             event.setAccepted(False)
 
     def onDrop(self, event):
@@ -47,16 +53,20 @@ class CalculatorSubWindow(NodeEditorWidget):
             op_code = dataStream.readInt()
             text = dataStream.readQString()
 
-            print("GOT DROP: [%d] '%s'" % (op_code, text))
-            # print("dragging item <%d>" % op_code)
+            mouse_position = event.pos()
+            scene_position = self.scene.grScene.views()[0].mapToScene(mouse_position)
 
+            print("GOT DROP: [%d] '%s'" % (op_code, text), "mouse:", mouse_position, "scene:", scene_position)
 
-            # mouse_position = event.pos()
-            # scene_position = self.scene.views()[0].mapToScene(mouse_position)
+            try:
+                #node = CalculatorBaseNodeFunctions(self.scene, op_code, text, inputs=[1,1], outputs=[2])
+                node = get_class_from_opcode(op_code)(self.scene)
+                node.setPos(scene_position.x(), scene_position.y())
+            except Exception as e:
+                dumpException(e)
 
             event.setDropAction(Qt.MoveAction)
             event.accept()
-
         else:
             # print(" ... drop ignored, not requested format '%s'" % LISTBOX_MIMETYPE)
             event.ignore()
